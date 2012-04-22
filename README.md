@@ -1,4 +1,4 @@
 presentation-mobile-security-introduction
 =========================================
 
-Introduction to Mobile Security. Presentation based on drafted version of OWASP Top 10 Mobile.
+Introduction to Mobile Security. Presentation based on OWASP Top 10 Mobile (draft status).

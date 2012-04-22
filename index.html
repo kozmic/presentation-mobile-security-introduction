@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Mobil - Introduksjon til applikasjonssikkerhet</title>
+    <meta charset="utf-8">
+    <script src="./js/slides.js"></script>
+    <link rel="stylesheet/less" type="text/css" href="./css/styles.less"/>
+    <script src="./js/less-1.2.2.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="./js/prettify.js"></script>
+    <style>
+    </style>
+    <meta name="viewport" content="width=1100,height=750">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+</head>
+<body>
+<section class="slides layout-regular template-default">
+
+
+<article class="current">
+    
+    <span id="presenterLink" style="position: absolute; top: 30px; left: 50px;">
+        <a href="#" onclick="javascript:openPresenterWindow(); return false;">[P]</a>
+    </span>
+
+    <h1>
+        Sikkerhet i mobile applikasjoner<br />
+        OWASP Top 10 Risks Mobile
+    </h1>
+
+    <p style="text-align: center;">OWASP Norway, 24.april 2012<br/><br/>Ståle Pettersen</p>
+</article>
+
+
+<article class="next">
+    <h2>
+        Om meg
+    </h2>
+
+    <ul>
+        <li>
+            Ståle Pettersen
+        </li>
+        <li>
+            Java-utvikler og sikkerhetsentusiast
+        </li>
+        <li>
+            BEKK
+        </li>
+        <li>
+            OWASP
+        </li>
+    </ul>
+    <p>
+        <a style="text-decoration: none;" href="http://twitter.com/kozmic">twitter.com/kozmic</a><br/><br/>
+    </p>
+
+    <div class="note">
+
+    </div>
+</article>
+
+<article>
+    <h2>Mobile egenskaper</h2>
+
+    <ul>
+        <li>
+            Mobiler blir mistet og stjålet
+        </li>
+        <li>
+            Mange applikasjoner kjører samtidig
+        </li>
+        <li>
+            Autentisering og autorisasjon
+        </li>
+        <li>
+            Bruker ofte mange remote web services
+        </li>
+        <li>
+            Tredjeparts tjenester
+        </li>
+        <li>
+            Mange mobile platformer, ingen gjør ting likt - økt kompleksitet
+        </li>
+        <li>
+            Mye sensitiv informasjon som applikasjoner kan ha tilgang til
+            <ul>
+                <li>
+                    Kontaktinformasjon
+                </li>
+                <li>
+                    Bilder
+                </li>
+                <li>
+                    Video
+                </li>
+                <li>
+                    SMS
+                </li>
+                <li>
+                    GPS-lokasjon
+                </li>
+                <li>
+                    Kredittkort (NFC)
+                </li>
+                <li>
+                    Tilkoblede enheter (Bluetooth)
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+    <div class="note">
+        Backup-er av telefoner sprer disse dataene
+    </div>
+</article>
+
+
+<article>
+    <h2>
+        Apple iOS
+    </h2>
+    <ul>
+        <li>
+            Hver applikasjon har sin egen sandbox, men kan kommunisere med hverandre vha schema
+        </li>
+        <li>
+            Backuper er ikke kryptert (kan konfigureres av bruker til å være kryptert)
+        </li>
+        <li>
+            iOS 5 har kryptert filsystem
+        </li>
+        <li>
+            Låsekode enkel å knekke (2-6 forsøk i sekundet ved bruk av API, ingen maks antall forsøk)
+        </li>
+        <li>
+            Kun tekst passord er sikkert
+        </li>
+    </ul>
+</article>
+
+<article>
+    <h2>Top 10 Mobile Risks, Release Candidate v1.0</h2>
+
+    <h3>BH EU 2012 - Jack Mannino, Zach Lanier og Mike Zusman</h3>
+    
+    <p>1. Insecure Data Storage</p>
+    <p>2. Weak Server Side Controls</p>
+    <p>3. Insufficient Transport Layer Protection</p>
+    <p>4. Client Side Injection</p>
+    <p>5. Poor Authorization and Authentication</p>
+    <p>6. Improper Session Handling</p>
+    <p>7. Security Decisions Via Untrusted Inputs</p>
+    <p>8. Side Channel Data Leakage</p>
+    <p>9. Broken Cryptography</p>
+    <p>10. Sensitive Information Disclosure</p>
+
+    <div class="note">
+        Burde være final 22.april, 60 dager etter siste kommentar
+    </div>
+</article>
+
+<article>
+    <h2>
+        1. Insecure data storage
+    </h2>
+    <ul>
+        <li>
+            Sensitive data som ikke er beskyttet (inkludert logger)
+        </li>
+        <li>
+            Data lokalt, men også data synkronisert mot cloud-tjenester
+        </li>
+
+        <br/>
+
+        <li>
+            Konsekvenser
+            <ul>
+                <li>
+                    Konfidensielle data tapt
+                </li>
+                <li>
+                    Brukernavn, passord og tokens på avveie
+                </li>
+                <li>
+                    Sensitive data på avveie
+                </li>
+            </ul>
+        </li>
+    </ul>
+</article>
+
+<article>
+    <h2>
+        1. Insecure data storage
+    </h2>
+
+    <ul>
+        <li>
+            "Husk meg" - Lagring av brukernavn og passord i en fil som alle andre applikasjoner kan lese
+            <ul>
+                <li>Android: Ikke bruke MODE_WORLD_READABLE, bruk MODE_PRIVATE</li>
+                <li>iOS: Kan ikke lagre globale filer, men kan eksponeres i backup-filer</li>
+            </ul>
+        </li>
+    </ul>
+
+</article>
+
+<article>
+    <h2>
+        1. Insecure data storage
+    </h2>
+    <ul>
+        <li>
+            Anbefales å kun lagre nødvendig data
+        </li>
+        <li>
+            Ikke bruk lagringsområder som ikke er beskyttet av sikkerhetsmekanismer (SD-card)
+        </li>
+        <li>
+            Bruk sikkerhetsmekaniser innebygd i platform som filkrypterings API-er og keychain
+        </li>
+        <li>
+            Pass på at filer ikke kan leses og skrives globalt
+        </li>
+    </ul>
+</article>
+
+<article>
+    <h2>
+        2. Weak Server Side Controls
+    </h2>
+    <ul>
+        <li>
+            Backend-tjenester
+        </li>
+        <li>
+            Tjenester kan ikke stole på data fra klienten
+        </li>
+        <li>
+            Samme regler som for dagens webapplikasjoner
+        </li>
+    </ul>
+
+    <p class="note">
+        Inngår også i OWASP Top 10, OWASP Cloud Top 10. Autentisering osv er litt anerledes, men det kommer vi tilbake
+        til.
+    </p>
+</article>
+
+<article>
+    <h2>
+        3. Insufficient Transport Layer Protection
+    </h2>
+    <ul>
+        <li>
+            Ingen eller svak kryptering ved transport av sensitive data
+        </li>
+        <li>
+            Klient ignorerer sertifikat-feil (utgått, feil domene, ugyldig format), eller fallback er HTTP
+        </li>
+        <li>
+            Eksempel på dette er Google Calendar og Facebook som sendte autentisering som HTTP-header over HTTP
+        </li>
+    </ul>
+</article>
+
+<article>
+    <h2>
+        3. Insufficient Transport Layer Protection
+    </h2>
+
+    <ul>
+        <li>
+            Pass på at all sensitive data sendes kryptert
+        </li>
+        <li>
+            Dette inkluderer mobilnett, trådløstnett, NFC og bluetooth
+        </li>
+    </ul>
+</article>
+
+
+<article>
+    <h2>
+        4. Client Side Injection
+    </h2>
+    <ul>
+        <li>
+            Applikasjoner embedder nettleser bibliotek (webapp, hybrid og native)
+        </li>
+        <li>
+            Klassiske sårbarheter: Javascript-injection, SQL-injection, HTML-injection
+        </li>
+        <li>
+            Men kan også gi tilgang til SMS, telefon, betalingsystemer
+        </li>
+        <li>
+            Eksempel: Amazon kindle
+        </li>
+    </ul>
+
+    <p class="note">
+        Amazon Kindle ble jailbreaket med klientside Javascript ved å embedded JS i MP3 ID3 tag.
+        I native apps (Media Player) har en full tilgang JS API som ROOT via debug funksjoner.
+    </p>
+</article>
+
+
+<article>
+    <h2>
+        4. Client Side Injection
+    </h2>
+
+    <ul>
+        <li>
+            Ikke stolt på brukerinput - valider og encode
+        </li>
+        <li>
+            I hybrid app: Minimer native API som blir eksponert til webapp
+        </li>
+        <li>
+            Bruk prepared statements
+        </li>
+    </ul>
+    <pre class="prettify">
+SQLiteStatement stmt =
+   db.compileStatement("SELECT * FROM Country WHERE code = ?");
+stmt.bindString(1, "US");
+stmt.execute();
+    </pre>
+</article>
+
+<article>
+    <h2>
+        5. Poor Authorization and Authentication
+    </h2>
+    <ul>
+        <li>
+            Ikke stol på verdier som ikke kan endres (UUID, IMSI, IMEI, MAC, ICCID)
+        </li>
+        <li>
+            Hardware identifikatorer forandrer seg ikke (finn.no?)
+        </li>
+        <li>
+            Eksempel: AT&amp;T - 114 000 eposter eksponert
+        </li>
+    </ul>
+    
+    <p class="note">
+        AT&T lakk 114 000 epost adresser
+    </p>
+</article>
+
+<article>
+    <h2>
+        5. Poor Authorization and Authentication
+    </h2>
+
+    <ul>
+        <li>
+            Out-of-band (f.ks SMS) gir lite ekstra verdi fordi det er samme enhet
+        </li>
+        <li>
+            Ikke bruk enhetsid eller SIM-kort ID alene til autentisering (men kan være bra til dybdesikkerhet)
+        </li>
+    </ul>
+</article>
+
+
+<article>
+    <h2>
+        6. Improper Session Handling
+    </h2>
+    <ul>
+        <li>
+            Brukere forventer at en ikke må logge inn hver gang en starter en applikasjon
+        </li>
+        <li>
+            Dette gjør at sesjoner må leve lenger - hvis en ønsker brukervennlighet
+        </li>
+        <li>
+            Typisk sesjon implementeres vha
+            <ul>
+                <li>
+                    HTTP cookies
+                </li>
+                <li>
+                    OAuth tokens
+                </li>
+                <li>
+                    SSO autentisering (f.eks Facebook connect)
+                </li>
+            </ul>
+        </li>
+        <li>
+            Hardware identifikater alene er ikke sikkert
+        </li>
+    </ul>
+</article>
+
+<article>
+    <h2>
+        6. Improper Session Handling
+    </h2>
+    <ul>
+        <li>
+            Anbefaler å ikke sende brukernavn og passord for hver request (da må dette lagres et sted, som kan lekke informasjon)
+        </li>
+        <li>
+            Bruk OAuth 2.0 tokens - Kan fjerne tilgang til enheter
+        </li>
+        <li>
+            La brukeren autentisere seg med jevne mellomrom så hvert token ikke har for lang levetid
+        </li>
+        <li>
+            Tokens må være kryptografisk sikre (ikke prøv å skriv egen random-generator)
+        </li>
+    </ul>
+</article>
+
+
+<article>
+    <h2>
+        7. Security Decisions Via Untrusted Inputs
+    </h2>
+    <ul>
+        <li>
+            iOS: Misbruk av Schema
+            <pre class="prettify">
+skype://98888888?call
+            </pre>
+        </li>
+        <li>
+            Android: Misbruk av Intents
+        </li>
+        <li>
+            Onde nettsider kan kjøre applikasjoner på telefon uten at brukeren blir spurt
+        </li>
+        <li>
+            Kan utnytte sårbarheter i applikasjoner fra nettsteder
+            <ul>
+                <li>
+                    Hvis skype har XSS i håndtering av skype:// kan en stjele info eller sende SMS
+                </li>
+            </ul>
+        </li>
+    </ul>
+</article>
+
+<article>
+    <h2>
+        7. Security Decisions Via Untrusted Inputs
+    </h2>
+    <ul>
+        <li>
+            Sjekk hvilken applikasjon som prøver å utføre en handling
+        </li>
+        <li>
+            Spør brukeren om dette er ønskelig (slik iOS håndterer tel-schema i Safari)
+        </li>
+    </ul>
+</article>
+
+<article>
+    <h2>
+        8. Side Channel Data Leakage
+    </h2>
+    <ul>
+        <li>
+            Sensitive data blir lagret på usikre steder (direkte eller indirekte)
+            <ul>
+                <li>
+                    Web browser cache inkludert HTML5 storage
+                </li>
+                <li>
+                    Logger
+                </li>
+                <li>
+                    Midlertidlig kataloger (kan oppstå f.eks når applikasjonen kræsjer)
+                </li>
+                <li>
+                    Backup-filer
+                </li>
+                <li>
+                    Synkroniseringsprogrammer / Cloud-tjenester
+                </li>
+            </ul>
+        </li>
+        <li>
+            Forstå også hvordan tredjeparts bibloteker lagrer sensitive data
+        </li>
+        <li>
+            Facebook sin mobilapp lagret token i ren tekst (60 dagers gyldighet)
+        </li>
+    </ul>
+</article>
+
+<article>
+    <h2>
+        8. Side Channel Data Leakage
+    </h2>
+
+    <ul>
+        <li>
+            Ikke logg sensitive data som passord
+        </li>
+        <li>
+            Sett no-cache headere for embedded nettsider med sensitive data
+        </li>
+        <li>
+            Ikke lagre sensitive data i HTML5 storage
+        </li>
+        <li>
+            Overvåk applikasjonen og se hvilke filer som skrives (tredjeparts biblioteker dokumenter dette sjeldent, så sjekk selv)
+        </li>
+    </ul>
+</article>
+
+
+<article>
+    <h2>
+        9. Broken Cryptography
+    </h2>
+    <ul>
+        <li>
+            Krypto brukt feil
+            <ul>
+                <li>
+                    Sterk crypto algorytme, men lagrer nøkkel på disk i plaintekst
+                </li>
+                <li>
+                    Egen algorytme og implementasjon som ikke er sikker
+                </li>
+            </ul>
+        </li>
+        <li>
+            Encoding (f.eks base64) og serialisering er ikke krypto
+        </li>
+    </ul>
+</article>
+
+<article>
+    <h2>
+        9. Broken Cryptography
+    </h2>
+
+    <ul>
+        <li>
+            Å lagre nøkkelen på disk gir liten sikkerhetsverdi
+        </li>
+        <li>
+            Ikke finne på egen krypto, du kommer til å gjøre feil
+        </li>
+        <li>
+            Utnytt sikkerhetsmekanismene i platformen! (iOS og Android: Keychain)
+        </li>
+    </ul>
+</article>
+
+
+<article>
+    <h2>
+        10. Sensitive Information Disclosure
+    </h2>
+    <ul>
+        <li>
+            Hardkodede verdier i applikasjonen
+        </li>
+        <li>
+            Applikasjoner kan reverse engineeres (ikke alltid like lett.. men mulig)
+        </li>
+        <li>
+            Private nøkkler, passord, sensitive algorytmer og  "hemmelige parametere"
+        </li>
+    </ul>
+</article>
+
+
+<article>
+    <h2>
+        OWASP Top 10 Mobile Risks
+    </h2>
+    <ul>
+        <li>
+            RC 1.0 i dag, men 1.0 final er rett rundt hjørnet
+        </li>
+        <li>
+            Trenger flere frivillige, så kan du mobilsikkerhet, eller har lyst til å lære, er det bare å bidra! :)
+        </li>
+    </ul>
+</article>
+
+
+<article>
+    <h2>Case study: Password managers</h2>
+
+    <ul>
+        <li>
+            ElcomSoft evaluerte 17 "passord managers" (iOS og Blackberry)
+        </li>
+        <li>
+            16 hadde implementert egen sikkerhet
+        </li>
+        <li>
+            7 hadde i praksis ingen kryptering
+        </li>
+        <li>
+            2 av 17 hadde utnyttet sikkerhetsmodellen til telefonen
+        </li>
+    </ul>
+
+    <p class="source">http://www.elcomsoft.com/WP/BH-EU-2012-WP.pdf</p>
+</article>
+
+<article>
+    <h2>Case study: Password managers</h2>
+
+    <ul>
+        <li>
+            My Eyes Only™ - Secure Password Manager
+            <ul>
+                <li>
+                    Bruker iOS sin innebygde keychain til å lagre RSA public og privat keys
+                </li>
+                <li>
+                    Dessverre lagres også disse nøklene utenfor keychain rett på disk
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+</article>
+
+
+<article>
+    <h2>Case study: Password managers</h2>
+
+    <ul>
+        <li>
+            DataVault Password Manager
+            <ul>
+                <li>
+                    Bruker iOS sin innebygde keychain
+                </li>
+                <li>
+                    Den sikrest av password managere som ble evaluert
+                </li>
+                <li>
+                    Enkleste å implementere :)
+                </li>
+            </ul>
+        </li>
+    </ul>
+
+</article>
+
+<article>
+    <h2>
+        Referanser
+    </h2>
+    <ul>
+        <li>
+            http://www.slideshare.net/JackMannino/owasp-top-10-mobile-risks
+            <ul>
+                <li>
+                    Jack Mannino
+                </li>
+                <li>
+                    Zach Lanier
+                </li>
+                <li>
+                    Mike Zusman
+                </li>
+            </ul>
+        </li>
+        <li>
+            https://www.owasp.org/index.php/OWASP_Mobile_Security_Project
+        </li>
+        <li>
+            https://www.owasp.org/index.php/Projects/OWASP_Mobile_Security_Project_-_Top_Ten_Mobile_Controls
+        </li>
+        <li>
+            http://software-security.sans.org/blog/2010/11/08/insecure-handling-url-schemes-apples-ios/
+        </li>
+        <li>
+            http://www.grc.com/sn/sn-347.pdf
+        </li>
+        <li>
+            Hacking and Securing iOS Applications - O'Reilly Media
+        </li>
+        <li>
+            http://nelenkov.blogspot.com/2011/11/using-ics-keychain-api.html
+        </li>
+    </ul>
+</article>
+
+</section>
+</body>
+</html>
