@@ -71,13 +71,10 @@
             Mange applikasjoner kjører samtidig
         </li>
         <li>
-            Autentisering og autorisasjon
+            Lange sesjoner for brukervennlighet
         </li>
         <li>
-            Bruker ofte mange remote web services
-        </li>
-        <li>
-            Tredjeparts tjenester
+            Bruker ofte mange remote web services, ofte flere redjeparts tjenester
         </li>
         <li>
             Mange mobile platformer, ingen gjør ting likt - økt kompleksitet
@@ -118,17 +115,17 @@
 
 <article>
     <h2>
-        Apple iOS
+        Eksempel: Apple iOS
     </h2>
     <ul>
         <li>
             Hver applikasjon har sin egen sandbox, men kan kommunisere med hverandre vha schema
         </li>
         <li>
-            Backuper er ikke kryptert (kan konfigureres av bruker til å være kryptert)
+            Backup kryptert med passcode by default. "Encrypted backup" kryptert med brukervalgt passord.
         </li>
         <li>
-            iOS 5 har kryptert filsystem
+            iOS 5 lagrer data kryptert by default (NSFileProtectionCompleteUntilFirstUserAuthentication)
         </li>
         <li>
             Låsekode enkel å knekke (2-6 forsøk i sekundet ved bruk av API, ingen maks antall forsøk)
@@ -277,6 +274,9 @@
             Pass på at all sensitive data sendes kryptert
         </li>
         <li>
+            Verifiser gyldighet til sertifikater
+        </li>
+        <li>
             Dette inkluderer mobilnett, trådløstnett, NFC og bluetooth
         </li>
     </ul>
@@ -289,7 +289,15 @@
     </h2>
     <ul>
         <li>
-            Applikasjoner embedder nettleser bibliotek (webapp, hybrid og native)
+            Applikasjoner embedder nettleser (webapp, hybrid og native)
+            <ul>
+                <li>
+                    iOS: UIWebView (Safari)
+                </li>
+                <li>
+                    Android: WebView (WebKit Engine)
+                </li>
+            </ul>
         </li>
         <li>
             Klassiske sårbarheter: Javascript-injection, SQL-injection, HTML-injection
@@ -303,6 +311,7 @@
     </ul>
 
     <p class="note">
+        Android disabled JS by default, i UIWebView ikke mulig å skru av JS.
         Amazon Kindle ble jailbreaket med klientside Javascript ved å embedded JS i MP3 ID3 tag.
         I native apps (Media Player) har en full tilgang JS API som ROOT via debug funksjoner.
     </p>
@@ -320,6 +329,9 @@
         </li>
         <li>
             I hybrid app: Minimer native API som blir eksponert til webapp
+        </li>
+        <li>
+            Kan hente innhold med NSData.dataWithContentsOfURL og sjekke innholdet før det lastes
         </li>
         <li>
             Bruk prepared statements
@@ -361,7 +373,7 @@ stmt.execute();
 
     <ul>
         <li>
-            Out-of-band (f.ks SMS) gir lite ekstra verdi fordi det er samme enhet
+            Out-of-band (f.ks SMS) gir lite sikkerhetsverdi fordi det er samme enhet
         </li>
         <li>
             Ikke bruk enhetsid eller SIM-kort ID alene til autentisering (men kan være bra til dybdesikkerhet)
@@ -391,7 +403,7 @@ stmt.execute();
                     OAuth tokens
                 </li>
                 <li>
-                    SSO autentisering (f.eks Facebook connect)
+                    SSO autentiseringsløsninger (f.eks Facebook connect brukes ofte)
                 </li>
             </ul>
         </li>
@@ -693,6 +705,9 @@ skype://98888888?call
         </li>
         <li>
             http://nelenkov.blogspot.com/2011/11/using-ics-keychain-api.html
+        </li>
+        <li>
+            http://source.android.com/tech/security/index.html
         </li>
     </ul>
 </article>
